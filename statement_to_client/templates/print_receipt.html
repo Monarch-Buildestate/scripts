@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Receipt</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .receipt {
+            width: 148mm; /* A5 width in millimeters */
+            height: 210mm; /* A5 height in millimeters */
+            padding: 10mm; /* Padding around the receipt */
+            font-family: 'Arial', sans-serif;
+            border: 1px solid #000;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .company-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .company-name {
+            font-size: 48px;
+            font-weight: bold;
+            font-family: 'Times New Roman', serif;
+            margin-bottom: 10px;
+        }
+
+        .company-logo {
+            width: 100px;
+            height: 100px;
+        }
+
+        .project-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .item {
+            font-size: 18px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: auto;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .authorized-signature {
+            font-size: 18px;
+            font-weight: bold;
+            font-style: italic;
+            text-align: right;
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+        }
+        
+        .address {
+            text-align: right;
+        }
+        
+        .receiptNo {
+            text-align: right;
+        }
+        
+        .mno {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="mno"> M. 9610449712 / 9376314000</div>
+        <div class="company-info">
+            <div class="company-name">Monarch Buildestate Pvt. Ltd.</div>
+        </div>
+        <div class="project-name">{{pname}}<br><div class="unit-name">{{uname}}</div> </div>
+        <div>Booking Date: {{bdate}}</div>
+        <div>Booking ID: {{bno}}</div>
+        <div>Customer: <b>{{cname}} </b></div>
+        <div>Customer Mobile Number: <b>{{mob}} </b></div>  
+        <br><br><br><br>
+        <b>   
+        <div class="item">
+            <table>
+                <tbody><tr>
+                    <th>Net Payable Amount</th>
+                    <th>Paid Amount</th>
+                    <th>Balance Amount</th>
+                </tr>
+                <tr>
+                    <td>{{netpay}}/-</td>
+                    <td>{{paidamount}}/-</td>
+                    <td>{{balance}}/-</td>
+                </tr>
+            </tbody></table>
+        </div>
+    </b>
+    </div>
+
+</body>
+</html>
