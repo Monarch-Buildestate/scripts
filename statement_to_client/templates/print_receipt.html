@@ -106,8 +106,31 @@
         <div>Booking ID: {{bno}}</div>
         <div>Customer: <b>{{cname}} </b></div>
         <div>Customer Mobile Number: <b>{{mob}} </b></div>  
-        <br><br><br><br>
-        <b>   
+        <br>
+        <br>   
+            <h1>{{rtitle}}</h1>
+        <div class="receipts">
+            {% if receipts %}
+            <table>
+                <thead>
+                    <td>Date</td>
+                    <td>Mode</td>
+                    <td>Voucher No.</td>
+                    <td>Amount</td>
+                </thead>
+                {% for r in receipts %}
+                <tr>
+                    <td>{{r.date}}</td>
+                    <td>{{r.mode}}</td>
+                    <td>{{r.vr_no}}</td>
+                    <td>{{r.amount}}/-</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+        
+        <br><br>   
         <div class="item">
             <table>
                 <tbody><tr>

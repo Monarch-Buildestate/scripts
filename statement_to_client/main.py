@@ -21,6 +21,26 @@ else:
 
 sent_to_numbers = []
 
+def get_receipts(bookingid:str):
+    if "statement2.xlsx" not in os.listdir("."):
+        return []
+    rs= []
+    wb2 = openpyxl.open("statement2.xlsx")
+    for row in wb2.active.rows:
+        if bookingid in row[7].value:
+            r = {
+                "vr_no": row[3].value,
+                "amount": row[14].value,
+                "mode": row[2].value,
+                "date": row[4].value.split("T")[0]
+            }
+            rs.append(r)    
+            print(r)
+            print
+    return rs
+
+
+
 for row in wb.active.rows:
     if not skipped_first:
         skipped_first = True
@@ -38,6 +58,13 @@ for row in wb.active.rows:
     bookingid = row[9].value
     bookingdate = row[10].value.split("T")[0]
     output_file_name = f"file"
+    print(bookingid)
+    reciepts = get_receipts(bookingid)
+    rtitles = "Receipts"
+    if len(reciepts) > 15:
+        rtitles = ""
+        reciepts = []
+    
     with app.app_context():
         template = open("templates/print_receipt.html").read()
         string = render_template_string(
@@ -50,7 +77,9 @@ for row in wb.active.rows:
             mob=mobile, 
             netpay=netamount, 
             paidamount=netadjusted, 
-            balance = netamount - netadjusted
+            balance = netamount - netadjusted,
+            receipts = reciepts,
+            rtitle = rtitles
             )
         
     pdfkit.from_string(string, f"{output_file_name}.pdf", options={"zoom": 1.5})
@@ -86,12 +115,13 @@ xxx"""
     pix = page.get_pixmap()
     pix.save(f"{output_file_name}.png")
     doc.close()
-    pwk.sendwhats_image(f"+91{mobile}", f"{output_file_name}.", text, 10, True)
+    #pwk.sendwhats_image(f"+91{mobile}", f"{output_file_name}.", text, 10, True)
     done.append(f"{custname} - {unitname} - {netadjusted}")
     with open("done.json", "w") as f:
         json.dump(done, f, indent=4)
     # remove this file after sending
+    break
     os.remove(f"{output_file_name}.pdf")
     os.remove(f"{output_file_name}.html")
     os.remove(f"{output_file_name}.png")
-    
+    break
