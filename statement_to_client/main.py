@@ -35,8 +35,6 @@ def get_receipts(bookingid:str):
                 "date": row[4].value.split("T")[0]
             }
             rs.append(r)    
-            print(r)
-            print
     return rs
 
 
@@ -120,8 +118,7 @@ xxx"""
     with open("done.json", "w") as f:
         json.dump(done, f, indent=4)
     # remove this file after sending
-    break
     os.remove(f"{output_file_name}.pdf")
     os.remove(f"{output_file_name}.html")
     os.remove(f"{output_file_name}.png")
-    break
+    
