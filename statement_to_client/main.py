@@ -56,6 +56,11 @@ for row in wb.active.rows:
     bookingdate = row[35].value.split("T")[0]
     output_file_name = f"file"
     print(unitname)
+    if f"{custname} - {unitname} - {netadjusted}" in done:
+        print("skipping")
+        # add to sent_to_numbers
+        sent_to_numbers.append(mobile)
+        continue
     reciepts = get_receipts(unitname)
     rtotal = sum([float(r["amount"]) for r in reciepts])
     rtitles = "Receipts"
@@ -64,11 +69,7 @@ for row in wb.active.rows:
         rtitles = ""
         reciepts = []"""
     
-    if f"{custname} - {unitname} - {netadjusted}" in done:
-        print("skipping")
-        # add to sent_to_numbers
-        sent_to_numbers.append(mobile)
-        continue
+    
     
     with app.app_context():
         template = open("templates/print_receipt.html").read()
