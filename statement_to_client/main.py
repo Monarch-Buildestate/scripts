@@ -21,13 +21,13 @@ else:
 
 sent_to_numbers = []
 
-def get_receipts(unitname:str):
+def get_receipts(unitname:str, custname:str):
     if "statement2.xlsx" not in os.listdir("."):
         return []
     rs= []
     wb2 = openpyxl.open("statement2.xlsx")
     for row in wb2.active.rows:
-        if unitname == row[8].value:
+        if unitname == row[8].value and custname.lower() in row[6].value.lower():
             r = {
                 "vr_no": row[3].value,
                 "amount": row[14].value,
@@ -61,7 +61,7 @@ for row in wb.active.rows:
         # add to sent_to_numbers
         sent_to_numbers.append(mobile)
         continue
-    reciepts = get_receipts(unitname)
+    reciepts = get_receipts(unitname, custname)
     rtotal = sum([float(r["amount"]) for r in reciepts])
     rtitles = "Receipts"
     """
