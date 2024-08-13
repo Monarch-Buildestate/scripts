@@ -43,20 +43,19 @@ for row in wb.active.rows:
     if not skipped_first:
         skipped_first = True
         continue
-    print(row[0].value)
-    customer_code = row[0].value
-    calc_area = row[1].value
-    unitrate = row[2].value
-    unitname = row[3].value
-    custname = row[4].value
-    mobile = row[5].value
-    netamount = row[6].value
-    netadjusted = row[7].value
-    projectname = row[8].value
-    bookingid = row[9].value
-    bookingdate = row[10].value.split("T")[0]
+    customer_code = row[1].value
+    calc_area = row[2].value
+    unitrate = row[3].value
+    unitname = row[12].value
+    custname = row[15].value
+    mobile = row[18].value
+    netamount = row[23].value
+    netadjusted = row[26].value
+    projectname = row[29].value
+    bookingid = row[34].value
+    bookingdate = row[35].value.split("T")[0]
     output_file_name = f"file"
-    print(bookingid)
+    print(unitname)
     reciepts = get_receipts(unitname)
     rtotal = sum([float(r["amount"]) for r in reciepts])
     rtitles = "Receipts"
@@ -65,6 +64,11 @@ for row in wb.active.rows:
         rtitles = ""
         reciepts = []"""
     
+    if f"{custname} - {unitname} - {netadjusted}" in done:
+        print("skipping")
+        # add to sent_to_numbers
+        sent_to_numbers.append(mobile)
+        continue
     
     with app.app_context():
         template = open("templates/print_receipt.html").read()
@@ -98,11 +102,6 @@ for row in wb.active.rows:
 धन्यवाद 
 मोनार्क बिल्डस्टेट प्रा. लि. बीकानेर  
 xxx"""
-    if f"{custname} - {unitname} - {netadjusted}" in done:
-        print("skipping")
-        # add to sent_to_numbers
-        sent_to_numbers.append(mobile)
-        continue
     
     if mobile in sent_to_numbers:
         text = ""
@@ -123,7 +122,21 @@ xxx"""
     # remove this file after sending
     if rtotal != netadjusted:
         print("Total not matching")
+        print(unitname)
         print(rtotal, netadjusted)
+        print(f"""Rtotal - {rtotal}
+Netadjusted - {netadjusted}
+Unitname - {unitname}
+Netamount - {netamount}
+Projectname - {projectname}
+Bookingid - {bookingid}
+Bookingdate - {bookingdate}
+Custname - {custname}
+Mobile - {mobile}
+Reciepts - {reciepts}
+Rtitles - {rtitles}
+
+""")
         break
     os.remove(f"{output_file_name}.pdf")
     os.remove(f"{output_file_name}.html")
