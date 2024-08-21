@@ -37,40 +37,64 @@ def get_receipts(unitname:str, custname:str):
             rs.append(r)    
     return rs
 
-
-
+data = []
 for row in wb.active.rows:
+    x = []
+    for col in row:
+        x.append(col.value)
+    data.append(x)
+    # group by custname that is on index 15
+
+
+for row in data:
     if not skipped_first:
         skipped_first = True
         continue
-    customer_code = row[1].value
-    calc_area = row[2].value
-    unitrate = row[3].value
-    unitname = row[12].value
-    custname = row[15].value
-    mobile = row[18].value
-    netamount = row[23].value
-    netadjusted = row[26].value
-    projectname = row[29].value
-    bookingid = row[34].value
-    bookingdate = row[35].value.split("T")[0]
+    customer_code = row[1]
+    calc_area = row[2]
+    unitrate = row[3]
+    unitname = row[12]
+    custname = row[15]
+    mobile = row[18]
+    netamount = row[23]
+    netadjusted = row[26]
+    projectname = row[29]
+    bookingid = row[34]
+    bookingdate = row[35].split("T")[0]
     output_file_name = f"file"
+    agentname = row[20]
+    print(agentname)
     print(unitname)
     if f"{custname} - {unitname} - {netadjusted}" in done:
         print("skipping")
         # add to sent_to_numbers
         sent_to_numbers.append(mobile)
         continue
+    if "9702373607" in mobile:
+        print("skipping")
+        continue
+    if "9541051563" in mobile:
+        print("Skipping")
+        continue
+    if "Quadari" in agentname:
+        print("skipping")
+        continue
+    plot_to_skip = ["C-88"]
+    for p in plot_to_skip:
+        if p in unitname:
+            print("skipping")
+            continue
     reciepts = get_receipts(unitname, custname)
     rtotal = sum([float(r["amount"]) for r in reciepts])
     rtitles = "Receipts"
-    """
-    if len(reciepts) > 15:
+    text = ""
+    if len(reciepts) > 10:
         rtitles = ""
-        reciepts = []"""
-    
-    
-    
+        for r in reciepts:
+            text += f"{r['vr_no']} - {r['amount']} - {r['mode']} - {r['date']}\n"
+        reciepts = []
+        
+        
     with app.app_context():
         template = open("templates/print_receipt.html").read()
         string = render_template_string(
@@ -95,20 +119,23 @@ for row in wb.active.rows:
     page = doc.load_page(0)
     pix = page.get_pixmap()
     pix.save(f"{output_file_name}.png")
-    text = """नमस्कार , 
+    if custname == "-":
+        continue
+    if mobile in sent_to_numbers:
+        text += f"""
+{unitname}"""
+    else:
+        text += """
+नमस्कार , 
 ये मोनार्क बिल्डस्टेट प्राइवेट लिमिटेड की वट्सअप सेवा है।
 अब आप अपने प्लाट की सारी जानकारी इस नंबर पर मैसेज अथवा कॉल  से प्राप्त कर सकते है ।
 आपके बुक किए गए प्लॉट की जानकारी आपको भेजी गई है, कृप्या चेक कर लें।
 अधिक जानकरी या किसी भी संशोधन के लिए निचे दिए गए आधिकारिक नंबरों पर सम्पर्क कर सकते है। 
 धन्यवाद 
 मोनार्क बिल्डस्टेट प्रा. लि. बीकानेर  
-xxx"""
+9376314000"""
     
-    if mobile in sent_to_numbers:
-        text = ""
-    if "xxx" in mobile:
-        print("skipping")
-        continue
+
 
     sent_to_numbers.append(mobile)
     doc = fitz.open(f"{output_file_name}.pdf")
@@ -116,7 +143,7 @@ xxx"""
     pix = page.get_pixmap()
     pix.save(f"{output_file_name}.png")
     doc.close()
-    #pwk.sendwhats_image(f"+91{mobile}", f"{output_file_name}.", text, 10, True)
+    pwk.sendwhats_image(f"+91{mobile}", f"{output_file_name}.png", text, 7, True)
     done.append(f"{custname} - {unitname} - {netadjusted}")
     with open("done.json", "w") as f:
         json.dump(done, f, indent=4)
